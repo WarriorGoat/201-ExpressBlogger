@@ -24,37 +24,82 @@ const validateBlogData = (blogData) => {
 		}
 	}
 
-	// if (blogData.category === undefined) {
-	// 	return {
-	// 		isValid: false,
-	// 		message: "Blog category is required."
-	// 	}
+	if (blogData.category === undefined) {
+		return {
+			isValid: false,
+			message: "Blog category is required."
+		}
+	}
+    if (!Array.isArray(blogData.category)) {
+		return {
+			isValid: false,
+			message: "Blog category must be an array."
+		}
+	}
+    if (blogData.category.length > 10) {
+		return {
+			isValid: false,
+			message: "Blog category must be an array with 10 entries or less."
+		}
+	}
+
+
+    const nonStringCategories = blogData.category.filter((nextCategory)=>{
+
+		// If the callback function in .filter() returns true, then the item will be kept in the resultant array. If the callback returns false, the item will be filtered out
+		if (typeof(nextCategory) !== 'string') {
+			return true
+		} else {
+			return false
+		}
+	})
+    // console.log("nonStringFoods ", nonStringFoods)
+
+	if (nonStringCategories.length > 0) {
+		return {
+			isValid: false,
+			message: "Categories must be an array of strings"
+		}
+	}
+
+	// return {
+	// 	isValid: true
 	// }
-    // if (!Array.isArray(blogData.category)) {
+
+    const allowedCategories = ["Lorem", "ipsum", "dolor", "sit", "amet"];
+    console.log(allowedCategories);
+    const submittedCategories = blogData.category; //Converts the submitted category array into a string.
+    console.log(submittedCategories);
+    let compare = allowedCategories.filter(element => submittedCategories.includes(element));
+    console.log(compare);
+                if (compare.length === submittedCategories.length){
+                    return {
+                        isValid: true,
+                        message: "categories did match"
+                    };
+                }else {
+                    return {
+                        isValid: false,
+                        message: "Blog category must match the approved categories."
+                    }
+                }
+
+    // function filterByCategory(category){
+    //     let blogCategory = [];
+    //         blogData.forEach((blog)=>{
+    //             let movieGenre = film.Genre;
+    //             let movieGenreArray = movieGenre.split(/[,\s]/)//the regex expression looks for commas and spaces but leaves other punctuation
+    //             let compare = genre.filter(element => movieGenreArray.includes(element));
+    //             if (compare.length>=1){
+    //                 filmGenres.push(film);
+    //             }
+    //         })
+    //     return filmGenres
+
+
 	// 	return {
 	// 		isValid: false,
-	// 		message: "Blog category must be an array."
-	// 	}
-	// }
-    // if (blogData.category.length > 10) {
-	// 	return {
-	// 		isValid: false,
-	// 		message: "Blog category must be an array with 10 entries or less."
-	// 	}
-	// }
-
-
-
-
-
-
-
-    // if (blogData.category !== "Lorem" && blogData.category !== "ipsum" && blogData.category !== "dolor" && blogData.category !== "sit" && blogData.category !== "amet") {
-    //     console.log(blogData.category);
-    //     console.log(typeof(blogData.category));
-	// 	return {
-	// 		isValid: false,
-	// 		message: "Blog category must match one of the five approved categories." 
+	// 		 
 	// 	}
 	// }
 	
