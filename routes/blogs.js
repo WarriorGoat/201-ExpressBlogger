@@ -1,11 +1,14 @@
 const express = require('express');
 const router = express.Router();
 
+const { validateBlogData } = require("../validation/blogs");
+
 /* GET blogs. */
 router.get('/', function(req, res, next) {
   res.send('Blogs Page');
 });
 
+//Retreive all blogs
 router.get('/all', function(req, res, next) {
     res.json({
         success: true,
@@ -13,31 +16,101 @@ router.get('/all', function(req, res, next) {
     });
 });
 
-router.get('/single-blog/:blogTitleToGet', function(req, res, next) {
+//retrieve or delete a single blog by title - note the get and delete commands are chained together using a single route
+router
+.route('/single-blog/:blogTitle') 
+.get((req, res, next) => {
     const blogRequested = sampleBlogs.find((blog)=>{
-		return blog.title === req.params.blogTitleToGet;
+		return blog.title === req.params.blogTitle;
 	})
 	res.json({
 		success: true,
 		movie: blogRequested
 	})
-});
-
-router.delete('/delete-blog/:blogTitleToDelete', function(req, res, next) {
-    const titleToDelete = req.params.blogTitleToDelete;
-
+})
+.delete((req, res, next) => {
+    const titleToDelete = req.params.blogTitle;
 	const indexOfBlogs = sampleBlogs.findIndex((blog)=>{
 		return blog.title === titleToDelete;
 	})
-
 	sampleBlogs.splice(indexOfBlogs, 1)
-
 	res.json({
 		success: true
 	})
 });
 
+//create a new blog
+router.post('/create-one', function (req, res, next){
+    try {
+        const newBlogPost = {};
+        newBlogPost.title = req.body.title;
+        newBlogPost.author = req.body.author;
+        newBlogPost.text = req.body.text;
+        newBlogPost.category = req.body.category;
+        newBlogPost.createdAt = new Date();
+        newBlogPost.lastModified = new Date();
+    
+        const blogDataCheck = validateBlogData(newBlogPost);
+        if (blogDataCheck.isValid === false) {
+			throw Error(blogDataCheck.message);
+        }
+	    sampleBlogs.push(newBlogPost);
+    }
+    catch (e) {
+        console.log(e);
+        res.json({
+            success: false,
+            error: String(e)
+    })}
+    res.json({
+        success: true
+    })
+});
 
+//edit an existing blog by title
+router.put('/update-blog/:blogTitleToUpdate', (req, res, next) => {
+    try {
+        const blogTitleToFind = req.params.blogTitleToUpdate;
+        const originalBlog = sampleBlogs.find((blog)=>{
+		    return blog.title === blogTitleToFind;
+	    });
+        const originalBlogIndex = sampleBlogs.findIndex((blog)=>{
+		    return blog.title === blogTitleToFind;
+	    });
+
+	    if (typeof(originalBlog) === "undefined") {
+		    res.json({
+			    success: false,
+			    message: "Could not find blog with that title.  Please try again."
+		    })
+		    return;
+	    }
+        const updatedBlogPost = {};
+        updatedBlogPost.title = req.body.title;
+        updatedBlogPost.author = req.body.author;
+        updatedBlogPost.text = req.body.text;
+        updatedBlogPost.category = req.body.category;
+        updatedBlogPost.createdAt = originalBlog.createdAt
+        updatedBlogPost.lastModified = new Date();
+        
+        const blogDataCheck = validateBlogData(updatedBlogPost);
+        if (blogDataCheck.isValid === false) {
+            throw Error(blogDataCheck.message);
+        }
+        sampleBlogs[originalBlogIndex]=updatedBlogPost;
+    }
+    catch (e) {
+        console.log(e);
+        res.json({
+            success: false,
+            error: String(e)
+    })}
+    res.json({
+        success: true
+    })
+});
+
+//base data set
 const sampleBlogs = [
     {
         title: "dicta",
