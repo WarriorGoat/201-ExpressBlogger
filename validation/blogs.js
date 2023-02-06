@@ -53,7 +53,7 @@ const validateBlogData = (blogData) => {
 			return false
 		}
 	})
-    // console.log("nonStringFoods ", nonStringFoods)
+
 
 	if (nonStringCategories.length > 0) {
 		return {
@@ -62,10 +62,8 @@ const validateBlogData = (blogData) => {
 		}
 	}
 
-	// return {
-	// 	isValid: true
-	// }
 
+	// Test the categories to make sure they are on the approved list.
     const allowedCategories = ["Lorem", "ipsum", "dolor", "sit", "amet"];
     console.log(allowedCategories);
     const submittedCategories = blogData.category; //Converts the submitted category array into a string.
@@ -83,25 +81,6 @@ const validateBlogData = (blogData) => {
                         message: "Blog category must match the approved categories."
                     }
                 }
-
-    // function filterByCategory(category){
-    //     let blogCategory = [];
-    //         blogData.forEach((blog)=>{
-    //             let movieGenre = film.Genre;
-    //             let movieGenreArray = movieGenre.split(/[,\s]/)//the regex expression looks for commas and spaces but leaves other punctuation
-    //             let compare = genre.filter(element => movieGenreArray.includes(element));
-    //             if (compare.length>=1){
-    //                 filmGenres.push(film);
-    //             }
-    //         })
-    //     return filmGenres
-
-
-	// 	return {
-	// 		isValid: false,
-	// 		 
-	// 	}
-	// }
 	
 	return {
 		isValid: true
